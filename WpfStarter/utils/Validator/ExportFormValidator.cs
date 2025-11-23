@@ -1,7 +1,4 @@
-﻿using WpfStarter.Models;
-
-
-namespace WpfStarter.utils.Validator;
+﻿namespace WpfStarter.utils.Validator;
 
 public static class ExportFormValidator
 {

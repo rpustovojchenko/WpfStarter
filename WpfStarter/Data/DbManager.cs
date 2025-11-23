@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using WpfStarter.Models;
+﻿using WpfStarter.Models;
 
 namespace WpfStarter.Data;
 
