@@ -40,7 +40,7 @@
             <GroupBox Header="Выберите поля для экспорта" Margin="10" Padding="10" BorderBrush="Black">
                 <StackPanel>
                     <Label Content="Дата"/>
-                    <DatePicker SelectedDate="{Binding ExpRecord.Date, Mode=TwoWay}"/>
+                    <DatePicker SelectedDate="{Binding ExpRecord.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <Label Content="Имя"/>
                     <TextBox Text="{Binding ExpRecord.FirstName, UpdateSourceTrigger=PropertyChanged}"/>

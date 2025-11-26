@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using WpfStarter.Data;
 using WpfStarter.Models;
@@ -10,8 +11,6 @@ public static class CsvUtils
 {
     private static readonly string _filePath =
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "records.csv");
-
-
 
     public static void ImportCsvToDb()
     {
@@ -36,7 +35,9 @@ public static class CsvUtils
             var parts = line.Split(';');
             records.Add(new()
             {
-                Date = DateOnly.Parse(parts[0]),
+                Date = string.IsNullOrWhiteSpace(parts[0])
+                    ? null
+                    : DateTime.ParseExact(parts[0], "dd.MM.yyyy", CultureInfo.InvariantCulture),
                 FirstName = parts[1],
                 SecondName = parts[2],
                 SurName = parts[3],

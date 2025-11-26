@@ -23,7 +23,7 @@ public static class DbManager
         var query = db.Records.AsQueryable();
 
         if (sample.Date != null)
-            query = query.Where(r => r.Date == sample.Date);
+            query = query.Where(r => r.Date.HasValue && r.Date.Value.Date == sample.Date.Value.Date);
 
         if (!string.IsNullOrWhiteSpace(sample.FirstName))
             query = query.Where(r => r.FirstName == sample.FirstName);

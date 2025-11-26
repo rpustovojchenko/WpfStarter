@@ -27,7 +27,7 @@ public static class ExcelExporter
             for (int i = 0; i < records.Count; i++)
             {
                 var rec = records[i];
-                ws.Cells[i + 2, 1].Value = rec.Date?.ToString("yyyy-MM-dd") ?? "-";
+                ws.Cells[i + 2, 1].Value = rec.Date?.ToString("dd.MM.yyyy") ?? "-";
                 ws.Cells[i + 2, 2].Value = rec.FirstName;
                 ws.Cells[i + 2, 3].Value = rec.SecondName;
                 ws.Cells[i + 2, 4].Value = rec.SurName;
