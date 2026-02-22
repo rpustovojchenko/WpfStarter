@@ -1,0 +1,96 @@
+﻿<Window x:Class="WpfStarter.Views.ExportDataWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WpfStarter.ViewModels"
+        xmlns:local="clr-namespace:WpfStarter.Views"
+        mc:Ignorable="d"
+        Title="ExportDataWindow" Height="600" Width="350" WindowStartupLocation="CenterScreen" WindowState="Normal">
+    <Window.DataContext>
+        <vm:ExportDataViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="367*"/>
+            <ColumnDefinition Width="433*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.ColumnSpan="2">
+
+            <GroupBox Header="Куда экспортировать" Margin="10" Padding="10" BorderBrush="Black">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="в Excel" Margin="0 0 10 0"
+                              IsChecked="{Binding ExcelCBChecked, Mode=TwoWay}"/>
+                    <CheckBox Content="в xml"
+                              IsChecked="{Binding XmlCBChecked, Mode=TwoWay}"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Выберите путь для сохранения" Margin="10" Padding="10" BorderBrush="Black">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding FilePath}" Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Center"
+                             HorizontalAlignment="Stretch"/>
+                    <Button Command="{Binding OpenSaveFileDialogCommand}" Content="..." Width="30" Grid.Column="1"
+                            VerticalAlignment="Center"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Header="Выберите поля для экспорта" Margin="10" Padding="10" BorderBrush="Black">
+                <StackPanel>
+                    <Label Content="Дата"/>
+                    <DatePicker SelectedDate="{Binding ExpRecord.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DatePicker.Resources>
+                            <Style TargetType="DatePickerTextBox">
+                                <Setter Property="IsReadOnly" Value="True"/>
+                            </Style>
+                        </DatePicker.Resources>
+                    </DatePicker>
+
+                    <Label Content="Имя"/>
+                    <TextBox Text="{Binding ExpRecord.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Фамилия"/>
+                    <TextBox Text="{Binding ExpRecord.LastName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Отчество"/>
+                    <TextBox Text="{Binding ExpRecord.SurName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Город"/>
+                    <TextBox Text="{Binding ExpRecord.City, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Страна"/>
+                    <TextBox Text="{Binding ExpRecord.Country, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </GroupBox>
+
+            <StackPanel HorizontalAlignment="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Экспортировать"
+                            Command="{Binding ExportDataCommand}"
+                            Grid.Column="0"
+                            Width="120"
+                            Height="35"
+                            Margin="10"
+                            />
+                    <Button Content="Закрыть"
+                            Command="{Binding CancelCommand}"
+                            Grid.Column="1"
+                            Width="120"
+                            Height="35"
+                            Margin="10"
+                            />
+                </Grid>
+            </StackPanel>
+
+
+        </StackPanel>
+    </Grid>
+</Window>
