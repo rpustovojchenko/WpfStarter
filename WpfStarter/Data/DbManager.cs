@@ -1,15 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WpfStarter.Models;
-using WpfStarter.Utils;
 
 namespace WpfStarter.Data;
 
 public static class DbManager
 {
-    public static List<Record> GetRecords()
+    public static async Task<int> GetRecordsCountAsync()
     {
         using var db = new AppDbContext();
-        return db.Records.ToList();
+        return await db.Records.CountAsync();
+    }
+
+    public static async Task<List<Record>> GetRecordsPageAsync(int page, int pageSize)
+    {
+        using var db = new AppDbContext();
+        return await db.Records
+            .AsNoTracking()
+            .OrderBy(r => r.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public static async Task<bool> IsDbEmptyAsync()
+    {
+        using var db = new AppDbContext();
+        return !await db.Records.AsNoTracking().AnyAsync();
     }
 
     public static void ClearAllRecords()
@@ -17,9 +33,6 @@ public static class DbManager
         using var db = new AppDbContext();
         db.Database.ExecuteSqlRaw("DELETE FROM Records");
     }
-
-    public static bool IsDbEmpty() =>
-        GetRecords().Count() == 0;
 
     public static List<Record> QueryRecordsBySample(Record sample)
     {

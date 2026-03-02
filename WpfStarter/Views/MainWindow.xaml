@@ -8,11 +8,17 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" 
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
+    
     <Grid>
-        <DataGrid ItemsSource="{Binding Records}"
+        <DataGrid ItemsSource="{Binding RecordsByPage}"
                   AutoGenerateColumns="False"
                   Margin="169,0,0,0" 
                   ColumnWidth="*" 
@@ -29,22 +35,52 @@
 
         <StackPanel>
             <Button Content="Импорт данных" 
-                Command="{Binding ImportDataCommand}"
-                HorizontalAlignment="Left" 
-                Margin="10,10,0,0" 
-                VerticalAlignment="Top" 
-                Height="32" 
-                Width="154"/>
+                    Command="{Binding ImportDataCommand}"
+                    HorizontalAlignment="Left" 
+                    Margin="10,10,0,0" 
+                    VerticalAlignment="Top" 
+                    Height="32" 
+                    Width="154"/>
 
             <Button Content="Экспорт данных" 
-                Command="{Binding OpenExportWindowCommand}"
-                HorizontalAlignment="Left" 
-                Margin="10,10,0,0" 
-                VerticalAlignment="Top" 
-                Height="32" 
-                Width="154"/>
+                    Command="{Binding OpenExportWindowCommand}"
+                    HorizontalAlignment="Left" 
+                    Margin="10,10,0,0" 
+                    VerticalAlignment="Top" 
+                    Height="32" 
+                    Width="154"/>
+
+            <TextBlock Text="{Binding PageString}"
+                       VerticalAlignment="Center"
+                       Margin="10, 10, 0, 0"/>
+
+            <StackPanel Orientation="Horizontal">
+                
+                <Button Content="&lt;-"
+                        Command="{Binding PreviousPageCommand}"
+                        HorizontalAlignment="Left"
+                        Margin="10, 10, 0, 0"
+                        VerticalAlignment="Top"
+                        Height="20"
+                        Width="72"/>
+
+
+                <Button Content="->"
+                        Command="{Binding NextPageCommand}"
+                        HorizontalAlignment="Right"
+                        Margin="10, 10, 0, 0"
+                        VerticalAlignment="Top"
+                        Height="20"
+                        Width="72"/>
+                
+            </StackPanel>
+
+            <ProgressBar Height="10"
+                         Width="154"
+                         HorizontalAlignment="Left"
+                         Margin="10, 5, 10, 0"
+                         IsIndeterminate="True"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </StackPanel>
-
-
     </Grid>
 </Window>

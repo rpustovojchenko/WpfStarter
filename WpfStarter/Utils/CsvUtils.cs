@@ -14,6 +14,8 @@ public static class CsvUtils
         const int batchSize = 5000;
         var batch = new List<Record>(batchSize);
 
+        int totalLines = File.ReadLines(filePath).Count();
+
         await Task.Run(async () =>
         {
             using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);

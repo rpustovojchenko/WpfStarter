@@ -1,10 +1,10 @@
-﻿using System.ComponentModel;
-using WpfStarter.Utils;
+﻿using WpfStarter.Utils;
+using WpfStarter.ViewModels.Base;
 
 
 namespace WpfStarter.Models;
 
-public class Record : INotifyPropertyChanged
+public class Record : ViewModelBase
 {
     public int          Id              { get; set; }
 
@@ -64,8 +64,4 @@ public class Record : INotifyPropertyChanged
         City        = string.Empty;
         Country     = string.Empty;
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

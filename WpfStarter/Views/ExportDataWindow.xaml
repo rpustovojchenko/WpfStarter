@@ -7,6 +7,11 @@
         xmlns:local="clr-namespace:WpfStarter.Views"
         mc:Ignorable="d"
         Title="ExportDataWindow" Height="600" Width="350" WindowStartupLocation="CenterScreen" WindowState="Normal">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+
     <Window.DataContext>
         <vm:ExportDataViewModel/>
     </Window.DataContext>
@@ -68,6 +73,11 @@
             </GroupBox>
 
             <StackPanel HorizontalAlignment="Center">
+                <ProgressBar Height="10"
+                             Margin="10, 5, 10, 0"
+                             IsIndeterminate="True"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

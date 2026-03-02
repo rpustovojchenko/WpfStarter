@@ -1,22 +1,24 @@
 ﻿using Microsoft.Win32;
-using System.ComponentModel;
 using System.Windows.Input;
 using WpfStarter.Data;
 using WpfStarter.Models;
 using WpfStarter.utils.Export;
 using WpfStarter.Utils;
+using WpfStarter.Utils.Commands;
 using WpfStarter.Utils.Export;
 using WpfStarter.Utils.Validator;
+using WpfStarter.ViewModels.Base;
 
 namespace WpfStarter.ViewModels;
 
-public class ExportDataViewModel : INotifyPropertyChanged
+public class ExportDataViewModel : ViewModelBase
 {
     public Record ExpRecord { get; }
 
     private string  _filePath;
     private bool    _excelCBChecked;
     private bool    _xmlCBChecked;
+    private bool    _isBusy;
 
     private string? _excelFilePath;
     private string? _xmlFilePath;
@@ -42,15 +44,20 @@ public class ExportDataViewModel : INotifyPropertyChanged
         get { return _xmlCBChecked; }
         set { _xmlCBChecked = value; OnPropertyChanged(nameof(XmlCBChecked)); }
     }
+    public bool IsBusy
+    {
+        get => _isBusy;
+        set { _isBusy = value; OnPropertyChanged(nameof(IsBusy)); }
+    }
 
     public ExportDataViewModel()
     {
         ExpRecord = new();
         _filePath = string.Empty;
 
-        OpenSaveFileDialogCommand   = new RelayCommand(OnOpenDialog);
-        ExportDataCommand           = new RelayCommand(async () => await OnExport());
-        CancelCommand               = new RelayCommand(OnCancel);
+        OpenSaveFileDialogCommand   = new RelayCommand(OnOpenDialog,        () => !IsBusy);
+        ExportDataCommand           = new AsyncRelayCommand(OnExportAsync,  () => !IsBusy);
+        CancelCommand               = new RelayCommand(OnCancel,            () => !IsBusy);
     }
 
     private void OnOpenDialog()
@@ -65,34 +72,44 @@ public class ExportDataViewModel : INotifyPropertyChanged
             FilePath = saveDialog.FileName;
     }
 
-    private async Task OnExport()
+    private async Task OnExportAsync()
     {
-        ExpRecord.FormatRecord();
+        if (IsBusy) return;
+        IsBusy = true;
 
-        if (!ExportFormValidator.IsFormValid(_excelCBChecked, _xmlCBChecked, FilePath, ExpRecord))
-            return;
+        try
+        {
+            ExpRecord.FormatRecord();
 
-        var records = DbManager.QueryRecordsBySample(ExpRecord);
+            if (!ExportFormValidator.IsFormValid(_excelCBChecked, _xmlCBChecked, FilePath, ExpRecord))
+                return;
 
-        (_excelFilePath, _xmlFilePath) =
-            ExportDataVMUtils.CreateExportPaths(FilePath, ExcelCBChecked, XmlCBChecked);
+            var records = DbManager.QueryRecordsBySample(ExpRecord);
 
-        if (ExcelCBChecked)
-            await ExcelExporter.ExportAsync(_excelFilePath, records);
-        if (XmlCBChecked)
-            await XmlExporter.ExportAsync(_xmlFilePath, records);
+            (_excelFilePath, _xmlFilePath) =
+                ExportDataVMUtils.CreateExportPaths(FilePath, ExcelCBChecked, XmlCBChecked);
 
-        ExportDataVMUtils.ShowExportResultMessage(ExpRecord, ExcelCBChecked, XmlCBChecked, _excelFilePath, _xmlFilePath);
+            if (ExcelCBChecked)
+                await ExcelExporter.ExportAsync(_excelFilePath, records);
+            if (XmlCBChecked)
+                await XmlExporter.ExportAsync(_xmlFilePath, records);
 
-        FilePath = ExportDataVMUtils.ResetForm(ExpRecord);
-        ExcelCBChecked = false;
-        XmlCBChecked = false;
+            ExportDataVMUtils.ShowExportResultMessage(ExpRecord, ExcelCBChecked, XmlCBChecked, _excelFilePath, _xmlFilePath);
+
+            FilePath = ExportDataVMUtils.ResetForm(ExpRecord);
+            ExcelCBChecked = false;
+            XmlCBChecked = false;
+        }
+        catch (Exception ex)
+        {
+            MessageBoxHelper.ShowError($"Ошибка при экспорте:\n{ex.Message}");
+        }
+        finally 
+        { 
+            IsBusy = false; 
+        }
     }
 
     private void OnCancel() =>
         CloseRequested?.Invoke();
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
